@@ -1,0 +1,23 @@
+﻿@model Cinema.Models.Reserva
+
+<h2 class="mb-4">Detalhes da Reserva</h2>
+
+<div class="card shadow-sm p-4">
+    <h4>@Model.Sessao.Filme.Titulo</h4>
+    <p><strong>Cliente:</strong> @Model.Utilizador.Nome</p>
+    <p><strong>Bilhetes:</strong> @Model.NumeroBilhetes</p>
+    <p><strong>Estado:</strong> @Model.Estado</p>
+    <p><strong>Data da Reserva:</strong> @Model.DataReserva</p>
+
+    <div class="mt-3 d-flex gap-2">
+        <form method="post" action="/AdminReservas/Cancelar/@Model.Id">
+            <button class="btn btn-warning">Cancelar</button>
+        </form>
+
+        <form method="post" action="/AdminReservas/Eliminar/@Model.Id">
+            <button class="btn btn-danger">Eliminar</button>
+        </form>
+
+        <a href="/AdminReservas" class="btn btn-secondary">Voltar</a>
+    </div>
+</div>

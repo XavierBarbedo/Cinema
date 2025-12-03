@@ -1,0 +1,41 @@
+﻿@model List<Cinema.Models.Utilizador>
+
+<h2 class="mb-4">Gestão de Utilizadores</h2>
+
+<form method="get" class="mb-4">
+    <select name="role" class="form-select w-25 d-inline-block">
+        <option value="">Todos</option>
+        <option value="Cliente">Clientes</option>
+        <option value="Administrador">Administradores</option>
+    </select>
+    <button class="btn btn-dark">Filtrar</button>
+</form>
+
+<table class="table table-hover shadow-sm">
+    <thead class="table-dark">
+        <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.Nome</td>
+                <td>@u.Email</td>
+                <td>
+                    <span class="badge bg-@(u.Role == "Administrador" ? "primary" : "secondary")">
+                        @u.Role
+                    </span>
+                </td>
+                <td>
+                    <a href="/AdminUtilizadores/Detalhes/@u.Id" class="btn btn-sm btn-outline-dark">Detalhes</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

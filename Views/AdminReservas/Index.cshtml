@@ -1,0 +1,62 @@
+﻿@model List<Cinema.Models.Reserva>
+
+<h2 class="mb-4">Gestão de Reservas</h2>
+
+<form method="get" class="row g-3 mb-4">
+    <div class="col-md-4">
+        <select name="utilizadorId" class="form-select">
+            <option value="">Filtrar por utilizador</option>
+            @foreach (var u in ViewBag.Utilizadores)
+            {
+                <option value="@u.Id" selected="@(ViewBag.UtilizadorIdSelecionado == u.Id)">
+                    @u.Nome
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-4">
+        <select name="estado" class="form-select">
+            <option value="">Filtrar por estado</option>
+            <option value="Confirmada">Confirmada</option>
+            <option value="Cancelada">Cancelada</option>
+        </select>
+    </div>
+
+    <div class="col-md-4">
+        <button class="btn btn-dark w-100">Filtrar</button>
+    </div>
+</form>
+
+<table class="table table-hover shadow-sm">
+    <thead class="table-dark">
+        <tr>
+            <th>Filme</th>
+            <th>Utilizador</th>
+            <th>Bilhetes</th>
+            <th>Estado</th>
+            <th>Data</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@r.Sessao.Filme.Titulo</td>
+                <td>@r.Utilizador.Nome</td>
+                <td>@r.NumeroBilhetes</td>
+                <td>
+                    <span class="badge bg-@(r.Estado == "Confirmada" ? "success" : "secondary")">
+                        @r.Estado
+                    </span>
+                </td>
+                <td>@r.DataReserva.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>
+                    <a href="/AdminReservas/Detalhes/@r.Id" class="btn btn-sm btn-outline-dark">Detalhes</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

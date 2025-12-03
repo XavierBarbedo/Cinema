@@ -1,0 +1,26 @@
+﻿@model Cinema.Models.Utilizador
+
+<h2 class="mb-4">Detalhes do Utilizador</h2>
+
+<div class="card shadow-sm p-4">
+    <h4>@Model.Nome</h4>
+    <p><strong>Email:</strong> @Model.Email</p>
+    <p><strong>Role:</strong> @Model.Role</p>
+
+    <h5 class="mt-4">Reservas</h5>
+
+    <ul class="list-group">
+        @foreach (var r in Model.Reservas)
+        {
+            <li class="list-group-item d-flex justify-content-between">
+                <span>@r.Sessao.Filme.Titulo — @r.NumeroBilhetes bilhetes</span>
+                <a href="/AdminReservas/Detalhes/@r.Id" class="btn btn-sm btn-outline-dark">Ver</a>
+            </li>
+        }
+    </ul>
+
+    <div class="mt-3">
+        <a href="/AdminUtilizadores/AlterarRole/@Model.Id" class="btn btn-primary">Alterar Role</a>
+        <a href="/AdminUtilizadores" class="btn btn-secondary">Voltar</a>
+    </div>
+</div>
