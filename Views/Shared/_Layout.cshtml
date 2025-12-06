@@ -1,67 +1,133 @@
 ﻿<!DOCTYPE html>
 
-<html lang="en">
+<html lang="pt">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Cinema</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Cinema.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Cinema</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
 
-                
-                <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between align-items-center" id="navbarSupportedContent">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+<body style="background-color: #121212">
+    <div id="main-wrapper">
+        <header>
+            <!-- ================== BARRA SUPERIOR ================== -->
+            <div class="topbar container-fluid">
+                <a asp-controller="Home" asp-action="Index" class="ms-4"
+                   style="color:white; font-size:26px; font-weight:700; display:flex; align-items:center; gap:10px; text-decoration:none;">
 
-                    <!-- Ícone de perfil com dropdown -->
-                    <div class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle p-0" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="~/images/profile.jpg" alt="Perfil" class="rounded-circle" style="width:40px; height:40px; object-fit:cover;">
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                            <li><a class="dropdown-item" href="@Url.Action("Login", "Utilizador")">Trocar de conta</a></li>
-                            <li><a class="dropdown-item">Apagar conta</a></li>
-                            <!--Não funciona a opção de log out-->
-                        </ul>
-                    </div>
+                    Cinemas
+                    <img src="~/images/cisco_logo.png" style="width:110px; height:auto;" />
+                </a>
+
+                <div class="search-box">
+                    <input type="text" placeholder="Pesquise por filmes, atores, realizadores..." />
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
                 </div>
+
+                <div class="topbar-buttons">
+                    <a class="icon-btn" asp-controller="Bilhetes" asp-action="Index">
+                        🎟 Carteira
+                    </a>
+
+                    <a class="icon-btn" asp-controller="Utilizador" asp-action="Login">
+                        👤 Login
+                    </a>
+                </div>
+
             </div>
-        </nav>
-    </header>
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+            <!-- ================== MENU INFERIOR ================== -->
+            <div class="menubar container-fluid ps-4">
+                <a asp-controller="Filmes" asp-action="Index">Filmes</a>
+                <a asp-controller="Cinemas" asp-action="Index">Cinemas</a>
+                <a asp-controller="Bar" asp-action="Index">Bar</a>
+                <a asp-controller="Vantagens" asp-action="Index">Vantagens</a>
+                <a asp-controller="Novidades" asp-action="Index">Novidades</a>
+                <a asp-controller="Produtos" asp-action="Index">Outros Produtos</a>
+                <a asp-controller="Corporativo" asp-action="Index">Corporativo</a>
+            </div>
+        </header>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - Cinema - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="container mt-4">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
         </div>
-    </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+        <footer class="text-muted text-center py-4" style="background-color:#0A0A0A; color:white;">
+            &copy; 2025 - Cinemas Cisco
+        </footer>
+
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+
+        @await RenderSectionAsync("Scripts", required: false)
+
+        <!-- Script da pesquisa que consulta a API e mostra filme em foco -->
+        <script>
+            $(document).ready(function() {
+                const searchBox = $('.search-box input');
+                const searchIcon = $('.search-box .search-icon');
+
+                function displayMovie(filme) {
+                    $('#movie-focus').remove();
+                    const html = `
+                    <div id="movie-focus" style="margin-top:30px; padding:20px; background-color:#1a1a1a; border-radius:12px;">
+                        <div style="display:flex; gap:30px; align-items:flex-start;">
+                            <img src="${filme.Capa}" alt="${filme.Titulo}" style="width:250px; height:auto; border-radius:10px; object-fit:cover;">
+                            <div style="color:white; max-width:600px;">
+                                <h2>${filme.Titulo}</h2>
+                                <p>${filme.Genero} • ${filme.Duracao} min</p>
+                                <p><strong>Com:</strong> ${filme.Elenco}</p>
+                                <p><strong>De:</strong> ${filme.Realizador}</p>
+                                <a href="https://www.youtube.com/watch?v=${filme.TrailerYoutubeId}" target="_blank" class="btn btn-light">▶ Ver Trailer</a>
+                                <a href="/Bilhetes/Comprar/${filme.Id}" class="btn btn-primary">Comprar Bilhete</a>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                    $('.container.mt-4').prepend(html);
+                }
+
+                function performSearch() {
+                    const query = searchBox.val().trim();
+                    if (query === '') return;
+
+                    $.ajax({
+                        url: '/Filmes/Buscar',
+                        type: 'GET',
+                        data: { q: query },
+                        success: function(response) {
+                            if (response && response.length > 0) {
+                                displayMovie(response[0]);
+                            } else {
+                                alert('Nenhum filme encontrado com esse termo.');
+                            }
+                        },
+                        error: function() {
+                            alert('Erro ao consultar a API de filmes.');
+                        }
+                    });
+                }
+
+                searchIcon.on('click', function() {
+                    performSearch();
+                });
+
+                searchBox.on('keypress', function(e) {
+                    if (e.which === 13) {
+                        performSearch();
+                    }
+                });
+            });
+        </script>
+    </div>
 
 </body>
 </html>

@@ -19,12 +19,17 @@ html {
     font-size: 14px;
     position: relative;
     min-height: 100%;
+    background-color: #121212; /* cinzento escuro */
+    color: #e0e0e0; /* texto claro para contraste */
 }
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin-bottom: 60px;
+    margin-bottom: 0px;
+    background-color: #121212; /* cinzento escuro */
+    color: #e0e0e0; /* texto claro para contraste */
 }
+
 
 /* Navbar Customização */
 .navbar-brand {
@@ -46,6 +51,8 @@ body {
     border: none;
     margin-bottom: 20px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #1e1e1e; /* fundo do card escuro */
+    color: #e0e0e0;
 }
 
     .card:hover {
@@ -59,8 +66,8 @@ body {
 
 /* Jumbotron */
 .jumbotron {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: linear-gradient(135deg, #333 0%, #555 100%);
+    color: #fff;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
@@ -107,18 +114,23 @@ body {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Footer */
+/* Footer fixo ao final da página, mas não sobre o conteúdo */
 .footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
     height: 60px;
     line-height: 60px;
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    text-align: center;
+    position: fixed;
+    left: 0;
+    bottom: 0;
 }
+
 
 /* Breadcrumb */
 .breadcrumb {
-    background-color: #f8f9fa;
+    background-color: #1f1f1f; /* fundo escuro */
+    color: #e0e0e0; /* texto claro */
     padding: 10px 15px;
     border-radius: 5px;
 }
@@ -209,4 +221,98 @@ body {
     .breadcrumb {
         display: none !important;
     }
+}
+/* ===================== */
+/*  LAYOUT CINEMA STYLE  */
+/* ===================== */
+
+.topbar {
+    background-color: #0A2A43; /* Azul escuro */
+    padding: 12px 0;
+    display: flex;
+    align-items: center;
+    height: 120px;
+}
+
+.search-box {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 25px;
+    padding: 6px 18px;
+    width: 760px; /*  Search box menor */
+    margin-left:auto ; /*  Encostada ao logo */
+    margin-right: 40px ; /* Empurra o resto para a direita */
+    color: white;
+    display: flex;
+    align-items: center;
+}
+.search-icon {
+    position: relative;
+    margin-right: -8px; /*  Lupa colada ao lado direito */
+    font-size: 16px;
+    color: white;
+    opacity: 0.8;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+    .search-icon:hover {
+        opacity: 1;
+    }
+    .search-box input {
+        background: transparent;
+        border: none;
+        outline: none;
+        width: 100%;
+        color: white;
+        font-size: 14px; /* Opcional: mais elegante */
+    }
+.topbar-buttons {
+    display: flex;
+    gap: 15px; /* Mantém o espaçamento entre os dois botões */
+    margin-right: 60px; /*  Aumenta a distância do canto direito */
+}
+
+
+.icon-btn {
+    background-color: rgba(255,255,255,0.15);
+    padding: 10px 18px;
+    border-radius: 50px;
+    color: white;
+    font-weight: 500;
+    text-decoration: none;
+    margin-left: 15px;
+    transition: 0.2s;
+
+}
+
+    .icon-btn:hover {
+        background-color: #1E90FF;
+        color: white;
+    }
+
+.menubar {
+    background-color: #000;
+    padding: 12px 0;
+}
+
+    .menubar a {
+        color: white;
+        margin-right: 25px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+        .menubar a:hover {
+            color: #1E90FF;
+        }
+
+#main-wrapper {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1; /* cresce para preencher o espaço e empurrar o footer para baixo */
 }

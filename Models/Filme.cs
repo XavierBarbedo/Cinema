@@ -21,11 +21,23 @@ namespace Cinema.Models
         [Range(1, 500, ErrorMessage = "A duração deve estar entre 1 e 500 minutos")]
         public int Duracao { get; set; } // em minutos
 
-        [StringLength(500)]
+        [StringLength(2000)]
         public string Sinopse { get; set; }
 
-        [StringLength(500)]
-        public string Capa { get; set; } // URL ou caminho da imagem
+        [StringLength(1000)]
+        public string Capa { get; set; } // imagem vertical (poster)
+
+        [StringLength(1000)]
+        public string Background { get; set; } // NOVO → imagem grande horizontal
+
+        [StringLength(200)]
+        public string? TrailerYoutubeId { get; set; } // NOVO → "dQw4w9WgXcQ"
+
+        [StringLength(700)]
+        public string Elenco { get; set; } // NOVO → "Jesse Eisenberg, Isla Fisher..."
+
+        [StringLength(200)]
+        public string Realizador { get; set; } // NOVO → "Ruben Fleischer"
 
         [DataType(DataType.Date)]
         public DateTime DataLancamento { get; set; }
@@ -33,4 +45,3 @@ namespace Cinema.Models
         public virtual ICollection<Sessao> Sessoes { get; set; }
     }
 }
-

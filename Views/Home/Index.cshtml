@@ -1,9 +1,107 @@
-﻿@{
-    ViewData["Title"] = "Cinema";
-}
+﻿@model List<Cinema.Models.Filme>
 
+<div id="hero-container" style="
+    position: relative;
+    width: 100%;
+    height: 480px;
+    background-color: #121212;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding: 0 80px;
+">
+    <div id="hero-poster" style="
+        flex-shrink: 0;
+        width: 300px;
+        height: 100%;
+    ">
+        <img src="@Model[0].Capa" alt="@Model[0].Titulo" style="
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        ">
+    </div>
 
-<div class="text-center mt-20">
-    <h1 class="text-4xl font-bold mb-4 text-gray-700">Bem-vindo ao Cinema</h1>
-    <p class="text-gray-600 text-lg mb-6">Consulta filmes, sessões e faz reservas facilmente.</p>
+    <div id="hero-content" style="color: white; max-width: 600px; margin-left: 40px;">
+        <p id="hero-genre" style="opacity:0.8; font-size:1rem; margin-bottom:5px;">
+            @Model[0].Genero • @Model[0].Duracao min
+        </p>
+
+        <h1 id="hero-title" style="font-size:2.8rem; font-weight:700; margin-bottom:15px;">
+            @Model[0].Titulo
+        </h1>
+
+        <p id="hero-info" style="margin-bottom:20px; line-height:1.4;">
+            <strong>Com:</strong> @Model[0].Elenco <br />
+            <strong>De:</strong> @Model[0].Realizador
+        </p>
+
+        <div style="display:flex; gap:15px;">
+            <a id="hero-trailer" href="https://www.youtube.com/watch?v=@Model[0].TrailerYoutubeId" target="_blank" class="btn btn-light">
+                ▶ Ver Trailer
+            </a>
+
+            <a id="hero-bilhete" asp-controller="Bilhetes" asp-action="Comprar" asp-route-id="@Model[0].Id" class="btn btn-primary">
+                Comprar Bilhete
+            </a>
+        </div>
+    </div>
+
 </div>
+
+<script>
+    const filmes = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+    let index = 0;
+
+    function mudarFilme() {
+        index = (index + 1) % filmes.length;
+        const filme = filmes[index];
+
+        const poster = document.getElementById('hero-poster').querySelector('img');
+        poster.src = filme.Capa;
+        poster.alt = filme.Titulo;
+
+        document.getElementById('hero-genre').innerText = `${filme.Genero} • ${filme.Duracao} min`;
+        document.getElementById('hero-title').innerText = filme.Titulo;
+        document.getElementById('hero-info').innerHTML = `<strong>Com:</strong> ${filme.Elenco} <br /><strong>De:</strong> ${filme.Realizador}`;
+        document.getElementById('hero-trailer').href = `https://www.youtube.com/watch?v=${filme.TrailerYoutubeId}`;
+        document.getElementById('hero-bilhete').setAttribute('asp-route-id', filme.Id);
+    }
+
+    setInterval(mudarFilme, 30000);
+</script>
+
+<!-- Secção Filmes em Cartaz -->
+
+<section style="padding: 50px 80px; background-color: #1a1a1a;">
+    <h2 style="color: white; font-size: 2rem; margin-bottom: 30px;">Filmes em Cartaz</h2>
+    <div style="
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 25px;
+    ">
+        @foreach (var filme in Model)
+        {
+            <div style="
+                    background-color: #222;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                    transition: transform 0.3s, box-shadow 0.3s;
+                " onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 15px 25px rgba(0,0,0,0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 5px 15px rgba(0,0,0,0.3)'">
+                <img src="@filme.Capa" alt="@filme.Titulo" style="
+                        width: 100%;
+                        height: 270px;
+                        object-fit: cover;
+                    ">
+                <div style="padding: 12px; color: white;">
+                    <h3 style="font-size:1.1rem; font-weight:600; margin-bottom:5px;">@filme.Titulo</h3>
+                    <p style="opacity:0.8; font-size:0.85rem;">@filme.Genero • @filme.Duracao min</p>
+                    <a asp-controller="Bilhetes" asp-action="Comprar" asp-route-id="@filme.Id" class="btn btn-primary" style="margin-top:8px; font-size:0.85rem;">Comprar Bilhete</a>
+                </div>
+            </div>
+        }
+    </div>
+</section>

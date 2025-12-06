@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Cinema.Data;
+using Cinema.Services; // <- adiciona isto
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +15,7 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectio
 // Adiciona suporte a controladores com views
 builder.Services.AddControllersWithViews();
 
-//  Adicionar suporte a sessão
+// Adicionar suporte a sessão
 builder.Services.AddDistributedMemoryCache();  // Cache em memória para sessão
 builder.Services.AddSession(options =>
 {
@@ -22,6 +23,11 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+// ==========================================
+// Registar serviço TMDb
+// ==========================================
+builder.Services.AddHttpClient<TmdbService>();
 
 var app = builder.Build();
 
@@ -48,6 +54,6 @@ app.UseAuthorization();
 // Rota padrão
 app.MapControllerRoute(
 name: "default",
-pattern: "{controller=Utilizador}/{action=Login}/{id?}");
+pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
