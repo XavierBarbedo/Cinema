@@ -4,15 +4,18 @@
 }
 
 <!DOCTYPE html>
-
 <html lang="pt">
 <head>
     <meta charset="utf-8" />
     <title>Login - Cinema</title>
+
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
+
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
     <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+
         <h2 class="text-2xl font-bold mb-6 text-center text-gray-700">Iniciar Sessão</h2>
 
         @if (TempData["Erro"] != null)
@@ -21,26 +24,25 @@
                 @TempData["Erro"]
             </div>
         }
-        @if (TempData["Sucesso"] != null)
-        {
-            <div class="bg-green-100 text-green-700 p-3 rounded mb-4 text-center">
-                @TempData["Sucesso"]
-            </div>
-        }
 
         <form asp-action="Login" asp-controller="Utilizador" method="post" class="space-y-4">
+
             <div>
-                <input asp-for="Email" type="email" placeholder="Email" value="@(Model?.Email ?? "")"
-                       class="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <input asp-for="Email" type="email" placeholder="Email"
+                       class="w-full p-3 border rounded focus:ring-2 focus:ring-blue-500" />
                 <span asp-validation-for="Email" class="text-red-500 text-sm"></span>
             </div>
+
             <div>
                 <input asp-for="Password" type="password" placeholder="Palavra-passe"
-                       class="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                       class="w-full p-3 border rounded focus:ring-2 focus:ring-blue-500" />
                 <span asp-validation-for="Password" class="text-red-500 text-sm"></span>
             </div>
 
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 mt-2 rounded"> Entrar </button>
+            <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded mt-2">
+                Entrar
+            </button>
         </form>
 
         <div class="text-center mt-4">
@@ -48,6 +50,7 @@
                 Criar conta
             </a>
         </div>
+
     </div>
 
 </body>

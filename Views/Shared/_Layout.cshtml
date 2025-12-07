@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var userName = Context.Session.GetString("UserName"); // null = não autenticado
+}
+
+<!DOCTYPE html>
 
 <html lang="pt">
 <head>
@@ -9,39 +13,74 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 </head>
 
 <body style="background-color: #121212">
     <div id="main-wrapper">
+
         <header>
-            <!-- ================== BARRA SUPERIOR ================== -->
+
+            <!-- ========== TOPBAR ========== -->
             <div class="topbar container-fluid">
+
                 <a asp-controller="Home" asp-action="Index" class="ms-4"
                    style="color:white; font-size:26px; font-weight:700; display:flex; align-items:center; gap:10px; text-decoration:none;">
-
                     Cinemas
-                    <img src="~/images/cisco_logo.png" style="width:110px; height:auto;" />
+                    <img src="~/images/cisco_logo.png" style="width:110px;">
                 </a>
 
+                <!-- Caixa de Pesquisa -->
                 <div class="search-box">
                     <input type="text" placeholder="Pesquise por filmes, atores, realizadores..." />
                     <i class="fa-solid fa-magnifying-glass search-icon"></i>
                 </div>
 
+                <!-- ======= BOTÕES DIREITA ======= -->
                 <div class="topbar-buttons">
+
                     <a class="icon-btn" asp-controller="Bilhetes" asp-action="Index">
-                        🎟 Carteira
+                        🎟 Reservas
                     </a>
 
-                    <a class="icon-btn" asp-controller="Utilizador" asp-action="Login">
-                        👤 Login
-                    </a>
+                    @if (string.IsNullOrEmpty(userName))
+                    {
+                        <!-- Usuário não autenticado -->
+                        <a class="icon-btn" asp-controller="Utilizador" asp-action="Login">
+                            👤 Login
+                        </a>
+                    }
+                    else
+                    {
+                        <!-- FOTO DE PERFIL quando autenticado -->
+                        <div class="dropdown" style="position:relative;">
+                            <img src="~/images/profile.jpg"
+                                 id="profileBtn"
+                                 style="width:48px; height:48px; border-radius:50%; cursor:pointer; object-fit:cover;">
+
+                            <div id="profileMenu"
+                                 style="display:none; position:absolute; right:0; top:55px; background:white; color:black;
+                                            width:180px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.4); z-index:999;">
+
+                                <p style="padding:12px 15px; margin:0; font-weight:600; border-bottom:1px solid #ccc;">
+                                    @userName
+                                </p>
+
+                                <a href="/Utilizador/Logout"
+                                   style="display:block; padding:10px 15px; text-decoration:none; color:black;">
+                                    🚪 Logout
+                                </a>
+
+                                <a href="/Utilizador/ApagarConta"
+                                   style="display:block; padding:10px 15px; text-decoration:none; color:black;">
+                                    ❌ Apagar Conta
+                                </a>
+                            </div>
+                        </div>
+                    }
                 </div>
-
             </div>
 
-            <!-- ================== MENU INFERIOR ================== -->
+            <!-- ========== MENU INFERIOR ========== -->
             <div class="menubar container-fluid ps-4">
                 <a asp-controller="Filmes" asp-action="Index">Filmes</a>
                 <a asp-controller="Cinemas" asp-action="Index">Cinemas</a>
@@ -51,6 +90,7 @@
                 <a asp-controller="Produtos" asp-action="Index">Outros Produtos</a>
                 <a asp-controller="Corporativo" asp-action="Index">Corporativo</a>
             </div>
+
         </header>
 
         <div class="container mt-4">
@@ -69,65 +109,46 @@
 
         @await RenderSectionAsync("Scripts", required: false)
 
-        <!-- Script da pesquisa que consulta a API e mostra filme em foco -->
+        <!-- Perfil Dropdown -->
         <script>
-            $(document).ready(function() {
+            document.addEventListener("DOMContentLoaded", () => {
+                const btn = document.getElementById("profileBtn");
+                const menu = document.getElementById("profileMenu");
+
+                if (btn) {
+                    btn.addEventListener("click", () => {
+                        menu.style.display = menu.style.display === "block" ? "none" : "block";
+                    });
+
+                    document.addEventListener("click", (e) => {
+                        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                            menu.style.display = "none";
+                        }
+                    });
+                }
+            });
+        </script>
+
+        <!-- Script da pesquisa -->
+        <script>
+            $(document).ready(function () {
                 const searchBox = $('.search-box input');
                 const searchIcon = $('.search-box .search-icon');
-
-                function displayMovie(filme) {
-                    $('#movie-focus').remove();
-                    const html = `
-                    <div id="movie-focus" style="margin-top:30px; padding:20px; background-color:#1a1a1a; border-radius:12px;">
-                        <div style="display:flex; gap:30px; align-items:flex-start;">
-                            <img src="${filme.Capa}" alt="${filme.Titulo}" style="width:250px; height:auto; border-radius:10px; object-fit:cover;">
-                            <div style="color:white; max-width:600px;">
-                                <h2>${filme.Titulo}</h2>
-                                <p>${filme.Genero} • ${filme.Duracao} min</p>
-                                <p><strong>Com:</strong> ${filme.Elenco}</p>
-                                <p><strong>De:</strong> ${filme.Realizador}</p>
-                                <a href="https://www.youtube.com/watch?v=${filme.TrailerYoutubeId}" target="_blank" class="btn btn-light">▶ Ver Trailer</a>
-                                <a href="/Bilhetes/Comprar/${filme.Id}" class="btn btn-primary">Comprar Bilhete</a>
-                            </div>
-                        </div>
-                    </div>
-                    `;
-                    $('.container.mt-4').prepend(html);
-                }
 
                 function performSearch() {
                     const query = searchBox.val().trim();
                     if (query === '') return;
 
-                    $.ajax({
-                        url: '/Filmes/Buscar',
-                        type: 'GET',
-                        data: { q: query },
-                        success: function(response) {
-                            if (response && response.length > 0) {
-                                displayMovie(response[0]);
-                            } else {
-                                alert('Nenhum filme encontrado com esse termo.');
-                            }
-                        },
-                        error: function() {
-                            alert('Erro ao consultar a API de filmes.');
-                        }
-                    });
+                    window.location.href = '/Filmes/Index?q=' + encodeURIComponent(query);
                 }
 
-                searchIcon.on('click', function() {
-                    performSearch();
-                });
-
-                searchBox.on('keypress', function(e) {
-                    if (e.which === 13) {
-                        performSearch();
-                    }
+                searchIcon.on('click', performSearch);
+                searchBox.on('keypress', function (e) {
+                    if (e.which === 13) performSearch();
                 });
             });
         </script>
-    </div>
 
+    </div>
 </body>
 </html>

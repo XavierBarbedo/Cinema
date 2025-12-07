@@ -6,6 +6,7 @@ using Cinema.Helpers;
 
 namespace Cinema.Controllers
 {
+    // Apenas administradores podem aceder a este controller
     [AdminOnly]
     public class AdminUtilizadoresController : Controller
     {
@@ -16,15 +17,13 @@ namespace Cinema.Controllers
             _context = context;
         }
 
-        // GET: AdminUtilizadores
+        // Painel principal dos utilizadores
         public async Task<IActionResult> Index(string role)
         {
             var query = _context.Utilizadores.AsQueryable();
 
             if (!string.IsNullOrEmpty(role))
-            {
                 query = query.Where(u => u.Role == role);
-            }
 
             var utilizadores = await query
                 .OrderBy(u => u.Nome)
@@ -35,7 +34,7 @@ namespace Cinema.Controllers
             return View(utilizadores);
         }
 
-        // GET: AdminUtilizadores/Detalhes/5
+        // Ver detalhes de um utilizador
         public async Task<IActionResult> Detalhes(int? id)
         {
             if (id == null) return NotFound();
@@ -50,23 +49,20 @@ namespace Cinema.Controllers
 
             if (utilizador == null) return NotFound();
 
-            // Não permitir ver detalhes do próprio utilizador desta forma
+            // Impedir ver os detalhes do próprio admin
             if (utilizador.Id == utilizadorAtualId)
-            {
                 return RedirectToAction("Perfil", "Utilizador");
-            }
 
             return View(utilizador);
         }
 
-        // GET: AdminUtilizadores/AlterarRole/5
+        // Mostrar página para alterar role
         public async Task<IActionResult> AlterarRole(int? id)
         {
             if (id == null) return NotFound();
 
             var utilizadorAtualId = HttpContext.Session.GetUserId();
 
-            // Não permitir alterar o próprio role
             if (id == utilizadorAtualId)
             {
                 TempData["Erro"] = "Não pode alterar o seu próprio role.";
@@ -79,7 +75,7 @@ namespace Cinema.Controllers
             return View(utilizador);
         }
 
-        // POST: AdminUtilizadores/AlterarRole/5
+        // Aplicar mudança de role
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AlterarRole(int id, string novoRole)
@@ -93,7 +89,6 @@ namespace Cinema.Controllers
             }
 
             var utilizador = await _context.Utilizadores.FindAsync(id);
-
             if (utilizador == null) return NotFound();
 
             if (novoRole != "Cliente" && novoRole != "Administrador")
@@ -103,11 +98,14 @@ namespace Cinema.Controllers
             }
 
             utilizador.Role = novoRole;
+
             _context.Update(utilizador);
             await _context.SaveChangesAsync();
 
-            TempData["Sucesso"] = $"Role alterado para {novoRole} com sucesso!";
+            TempData["Sucesso"] = $"O role do utilizador foi alterado para {novoRole}.";
             return RedirectToAction(nameof(Index));
         }
+
+
     }
 }

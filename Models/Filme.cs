@@ -25,23 +25,23 @@ namespace Cinema.Models
         public string Sinopse { get; set; }
 
         [StringLength(1000)]
-        public string Capa { get; set; } // imagem vertical (poster)
-
+        public string Capa { get; set; } // poster
         [StringLength(1000)]
-        public string Background { get; set; } // NOVO → imagem grande horizontal
-
+        public string Background { get; set; }
         [StringLength(200)]
-        public string? TrailerYoutubeId { get; set; } // NOVO → "dQw4w9WgXcQ"
-
+        public string? TrailerYoutubeId { get; set; }
         [StringLength(700)]
-        public string Elenco { get; set; } // NOVO → "Jesse Eisenberg, Isla Fisher..."
-
+        public string Elenco { get; set; }
         [StringLength(200)]
-        public string Realizador { get; set; } // NOVO → "Ruben Fleischer"
+        public string Realizador { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime DataLancamento { get; set; }
 
+        // NOVO CAMPO BOOLEAN
+        public bool SempreNoCinema { get; set; }
+
         public virtual ICollection<Sessao> Sessoes { get; set; }
     }
+
 }

@@ -1,0 +1,225 @@
+﻿@model Cinema.Models.Filme
+@{
+    var isEdit = Model != null && Model.Id > 0;
+    ViewData["Title"] = isEdit ? "Editar Filme" : "Adicionar Filme";
+}
+
+<h1 class="mb-4 text-white">@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-controller="Admin" asp-action="SaveFilme" method="post" class="needs-validation" novalidate>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            @if (isEdit)
+            {
+                <input type="hidden" asp-for="Id" />
+            }
+
+            <div class="card bg-dark text-white mb-3">
+                <div class="card-header">
+                    <h5>Informações Básicas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="Titulo" class="form-label"></label>
+                        <input asp-for="Titulo" class="form-control" placeholder="Ex: O Senhor dos Anéis" />
+                        <span asp-validation-for="Titulo" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Genero" class="form-label"></label>
+                            <input asp-for="Genero" class="form-control" placeholder="Ex: Fantasia, Ação" />
+                            <span asp-validation-for="Genero" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Duracao" class="form-label"></label>
+                            <div class="input-group">
+                                <input asp-for="Duracao" class="form-control" type="number" min="1" max="500" placeholder="120" />
+                                <span class="input-group-text">minutos</span>
+                            </div>
+                            <span asp-validation-for="Duracao" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Sinopse" class="form-label"></label>
+                        <textarea asp-for="Sinopse" class="form-control" rows="4" placeholder="Breve descrição do filme..."></textarea>
+                        <span asp-validation-for="Sinopse" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Realizador" class="form-label"></label>
+                            <input asp-for="Realizador" class="form-control" placeholder="Ex: Peter Jackson" />
+                            <span asp-validation-for="Realizador" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="DataLancamento" class="form-label"></label>
+                            <input asp-for="DataLancamento" class="form-control" type="date" />
+                            <span asp-validation-for="DataLancamento" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Elenco" class="form-label"></label>
+                        <input asp-for="Elenco" class="form-control" placeholder="Ex: Elijah Wood, Ian McKellen, Viggo Mortensen" />
+                        <span asp-validation-for="Elenco" class="text-danger"></span>
+                        <div class="form-text text-light">Separe os nomes por vírgulas</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-dark text-white mb-3">
+                <div class="card-header">
+                    <h5>Imagens e Multimédia</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="Capa" class="form-label"></label>
+                        <input asp-for="Capa" class="form-control" id="capaInput" placeholder="URL da imagem do poster" />
+                        <span asp-validation-for="Capa" class="text-danger"></span>
+                        <div class="form-text text-light">URL completo da imagem (ex: https://exemplo.com/poster.jpg)</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Background" class="form-label"></label>
+                        <input asp-for="Background" class="form-control" placeholder="URL da imagem de fundo" />
+                        <span asp-validation-for="Background" class="text-danger"></span>
+                        <div class="form-text text-light">URL completo da imagem de fundo</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="TrailerYoutubeId" class="form-label"></label>
+                        <input asp-for="TrailerYoutubeId" class="form-control" id="trailerInput" placeholder="Ex: dQw4w9WgXcQ" />
+                        <span asp-validation-for="TrailerYoutubeId" class="text-danger"></span>
+                        <div class="form-text text-light">Apenas o ID do vídeo do YouTube (não o URL completo)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-dark text-white mb-3">
+                <div class="card-header">
+                    <h5>Configurações</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-check form-switch">
+                        <input asp-for="SempreNoCinema" class="form-check-input" type="checkbox" />
+                        <label asp-for="SempreNoCinema" class="form-check-label"></label>
+                        <div class="form-text text-light">Filmes marcados como "Sempre no Cinema" não podem ser eliminados</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-save"></i> @(isEdit ? "Guardar Alterações" : "Criar Filme")
+                </button>
+                <a asp-controller="Admin" asp-action="FilmesDashboard" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-md-4">
+        @if (Model != null && !string.IsNullOrEmpty(Model.Capa))
+        {
+            <div class="card bg-dark text-white mb-3" id="previewCapaCard">
+                <div class="card-header">
+                    <h5>Pré-visualização da Capa</h5>
+                </div>
+                <div class="card-body text-center">
+                    <img src="@Model.Capa" alt="Capa" id="previewCapaImg" class="img-fluid rounded" style="max-height: 400px;" />
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="card bg-dark text-white mb-3" id="previewCapaCard" style="display: none;">
+                <div class="card-header">
+                    <h5>Pré-visualização da Capa</h5>
+                </div>
+                <div class="card-body text-center">
+                    <img src="" alt="Capa" id="previewCapaImg" class="img-fluid rounded" style="max-height: 400px;" />
+                </div>
+            </div>
+        }
+
+        @if (Model != null && !string.IsNullOrEmpty(Model.TrailerYoutubeId))
+        {
+            <div class="card bg-dark text-white" id="previewTrailerCard">
+                <div class="card-header">
+                    <h5>Pré-visualização do Trailer</h5>
+                </div>
+                <div class="card-body">
+                    <div class="ratio ratio-16x9">
+                        <iframe id="previewTrailerIframe"
+                                src="https://www.youtube.com/embed/@Model.TrailerYoutubeId"
+                                title="YouTube video player"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="card bg-dark text-white" id="previewTrailerCard" style="display: none;">
+                <div class="card-header">
+                    <h5>Pré-visualização do Trailer</h5>
+                </div>
+                <div class="card-body">
+                    <div class="ratio ratio-16x9">
+                        <iframe id="previewTrailerIframe"
+                                src=""
+                                title="YouTube video player"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Preview da imagem da capa em tempo real
+        document.getElementById('capaInput').addEventListener('input', function(e) {
+            const imgPreview = document.getElementById('previewCapaImg');
+            const cardPreview = document.getElementById('previewCapaCard');
+
+            if (e.target.value.trim() !== '') {
+                imgPreview.src = e.target.value;
+                cardPreview.style.display = 'block';
+            } else {
+                cardPreview.style.display = 'none';
+            }
+        });
+
+        // Preview do trailer em tempo real
+        document.getElementById('trailerInput').addEventListener('input', function(e) {
+            const iframe = document.getElementById('previewTrailerIframe');
+            const cardPreview = document.getElementById('previewTrailerCard');
+
+            if (e.target.value.trim() !== '') {
+                iframe.src = 'https://www.youtube.com/embed/' + e.target.value;
+                cardPreview.style.display = 'block';
+            } else {
+                cardPreview.style.display = 'none';
+            }
+        });
+    </script>
+}

@@ -43,6 +43,12 @@ public class UtilizadorController : Controller
         // Guardar na sessão
         HttpContext.Session.SetInt32("UserId", user.Id);
         HttpContext.Session.SetString("UserRole", user.Role);
+        HttpContext.Session.SetString("UserName", user.Nome);
+
+        if (user.Role == "Administrador")
+        {
+            return RedirectToAction("Home", "Admin");
+        }
 
         return RedirectToAction("Index", "Home");
     }
@@ -89,4 +95,31 @@ public class UtilizadorController : Controller
         TempData["Sucesso"] = "Conta criada com sucesso!";
         return RedirectToAction("Login", new { email = model.Email });
     }
+
+    public IActionResult Logout()
+    {
+        HttpContext.Session.Clear();
+        return RedirectToAction("Index", "Home");
+    }
+
+    public async Task<IActionResult> ApagarConta()
+    {
+        var userId = HttpContext.Session.GetInt32("UserId");
+
+        if (userId == null)
+            return RedirectToAction("Login");
+
+        var user = await _context.Utilizadores.FindAsync(userId);
+
+        if (user != null)
+        {
+            _context.Utilizadores.Remove(user);
+            await _context.SaveChangesAsync();
+        }
+
+        HttpContext.Session.Clear();
+
+        return RedirectToAction("Index", "Home");
+    }
+
 }

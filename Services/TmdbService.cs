@@ -57,6 +57,8 @@ namespace Cinema.Services
 
                 var filme = new Filme
                 {
+
+
                     Titulo = (string)dados["title"] ?? "Título não disponível",
                     Genero = dados["genres"]?.FirstOrDefault()?["name"]?.ToString() ?? "-",
                     Duracao = dados["runtime"] != null ? (int)dados["runtime"] : 0,
@@ -65,15 +67,18 @@ namespace Cinema.Services
                     Background = dados["backdrop_path"] != null ? "https://image.tmdb.org/t/p/original" + (string)dados["backdrop_path"] : "/images/fallback.jpg",
                     DataLancamento = DateTime.TryParse((string)dados["release_date"], out var dt) ? dt : DateTime.MinValue,
                     Elenco = dados["credits"]?["cast"] != null
-                        ? string.Join(", ", dados["credits"]["cast"].Take(5).Select(a => (string)a["name"]))
-                        : "-",
+                    ? string.Join(", ", dados["credits"]["cast"].Take(5).Select(a => (string)a["name"]))
+                    : "-",
                     Realizador = dados["credits"]?["crew"] != null
-                        ? (string)dados["credits"]["crew"].FirstOrDefault(c => (string)c["job"] == "Director")?["name"] ?? "-"
-                        : "-",
+                    ? (string)dados["credits"]["crew"].FirstOrDefault(c => (string)c["job"] == "Director")?["name"] ?? "-"
+                    : "-",
                     TrailerYoutubeId = dados["videos"]?["results"] != null
-                        ? (string)dados["videos"]["results"]
-                            .FirstOrDefault(v => (string)v["site"] == "YouTube" && (string)v["type"] == "Trailer")?["key"]
-                        : ""
+                    ? (string)dados["videos"]["results"]
+                        .FirstOrDefault(v => (string)v["site"] == "YouTube" && (string)v["type"] == "Trailer")?["key"]
+                    : "",
+
+                    // MARCAR COMO SEMPRE NO CINEMA
+                    SempreNoCinema = true
                 };
 
                 filmes.Add(filme);

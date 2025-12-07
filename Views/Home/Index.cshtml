@@ -43,8 +43,8 @@
                 ▶ Ver Trailer
             </a>
 
-            <a id="hero-bilhete" asp-controller="Bilhetes" asp-action="Comprar" asp-route-id="@Model[0].Id" class="btn btn-primary">
-                Comprar Bilhete
+            <a id="hero-bilhete" asp-controller="Sessao" asp-action="Ver" asp-route-id="@Model[0].Id" class="btn btn-primary">
+                Ver Sessões
             </a>
         </div>
     </div>
@@ -99,7 +99,7 @@
                 <div style="padding: 12px; color: white;">
                     <h3 style="font-size:1.1rem; font-weight:600; margin-bottom:5px;">@filme.Titulo</h3>
                     <p style="opacity:0.8; font-size:0.85rem;">@filme.Genero • @filme.Duracao min</p>
-                    <a asp-controller="Bilhetes" asp-action="Comprar" asp-route-id="@filme.Id" class="btn btn-primary" style="margin-top:8px; font-size:0.85rem;">Comprar Bilhete</a>
+                    <a asp-controller="Sessao" asp-action="Ver" asp-route-id="@filme.Id" class="btn btn-primary" style="margin-top:8px; font-size:0.85rem;">Ver Sessões</a>
                 </div>
             </div>
         }

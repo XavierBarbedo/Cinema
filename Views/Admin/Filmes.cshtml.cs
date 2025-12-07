@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Cinema.Views.Filmes
+namespace Cinema.Views.Admin
 {
-    public class IndexModel : PageModel
+    public class FilmesModel : PageModel
     {
         public void OnGet()
         {

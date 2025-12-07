@@ -7,11 +7,11 @@ namespace Cinema.Attributes
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var role = context.HttpContext.Session.GetString("Role");
+            var role = context.HttpContext.Session.GetString("UserRole");
 
-            if (role != "Admin")
+            if (role != "Administrador")
             {
-                context.Result = new RedirectToActionResult("Login", "Auth", null);
+                context.Result = new RedirectToActionResult("Login", "Utilizador", null);
             }
 
             base.OnActionExecuting(context);
