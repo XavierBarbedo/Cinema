@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Cinema.Models
 {
@@ -14,6 +15,7 @@ namespace Cinema.Models
         public int FilmeId { get; set; }
 
         [ForeignKey("FilmeId")]
+        [ValidateNever] // <--- Adicionar este atributo
         public virtual Filme Filme { get; set; }
 
         [Required(ErrorMessage = "A sala é obrigatória")]
@@ -34,6 +36,6 @@ namespace Cinema.Models
 
         public int LugaresDisponiveis { get; set; }
 
-        public virtual ICollection<Reserva> Reservas { get; set; }
+        public virtual ICollection<Reserva>? Reservas { get; set; }
     }
 }

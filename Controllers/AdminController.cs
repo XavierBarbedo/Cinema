@@ -1,19 +1,11 @@
-﻿
-using Cinema.Attributes; // Caso uses AdminOnly
+﻿using Cinema.Attributes;
 using Cinema.Data;
 using Cinema.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-
 
 namespace Cinema.Controllers
 {
-
-
     [AdminOnly]
     public class AdminController : Controller
     {
@@ -24,39 +16,38 @@ namespace Cinema.Controllers
             _context = context;
         }
 
-
         public IActionResult Home()
         {
             return View();
         }
 
-        // -------------------------
-        // FUTURAS EXTENSÕES DO PAINEL DE ADMIN
-        // -------------------------
-        // Estes métodos não precisam ser implementados agora,
-        // mas já deixo preparados para tua estrutura:
 
-
-        public IActionResult Sessoes()
+        // GET: /Admin/Sessoes
+        public async Task<IActionResult> Sessoes()
         {
-            return View();
+            // Usar .Include(f => f.Sessoes) para garantir que as sessões são carregadas
+            // juntamente com os filmes na mesma consulta à base de dados.
+            var filmes = await _context.Filmes
+                                       .Include(f => f.Sessoes)
+                                       .ToListAsync();
+
+            return View(filmes);
         }
 
         public IActionResult Reservas()
         {
             return View();
         }
+
         // GET: /Admin/Filmes
         public async Task<IActionResult> Filmes()
         {
-            // Busca todos os filmes da base de dados
-            List<Filme> filmes = await _context.Filmes.ToListAsync();
-
-            return View(filmes); // Passa a lista para a view
+            var filmes = await _context.Filmes.ToListAsync();
+            return View(filmes);
         }
+
         // POST: /Admin/Filmes/Delete/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
             var filme = _context.Filmes.Find(id);
@@ -70,36 +61,189 @@ namespace Cinema.Controllers
         }
 
         // GET: Criar novo filme
-        public IActionResult FilmeForm()
+        public IActionResult Create()
         {
-            return View(new Filme());
+            return View("FilmeForm", new Filme());
         }
 
         // GET: Editar filme existente
-        public IActionResult FilmeForm(int id)
+        public IActionResult Edit(int id)
         {
             var filme = _context.Filmes.Find(id);
             if (filme == null)
                 return NotFound();
-            return View(filme);
+
+            return View("FilmeForm", filme);
         }
 
-        // POST: Guardar (criar ou editar)
+        // POST: Salvar filme (criar ou editar)
         [HttpPost]
         public IActionResult SaveFilme(Filme filme)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                if (filme.Id == 0)
-                    _context.Filmes.Add(filme);
+                // Se houver erros de validação, retorna à view com os erros
+                return View("FilmeForm", filme);
+            }
+
+            try
+            {
+                if (filme.Id > 0)
+                {
+                    // EDITAR - filme existente
+                    var filmeExistente = _context.Filmes.Find(filme.Id);
+
+                    if (filmeExistente == null)
+                    {
+                        TempData["ErrorMessage"] = "Filme não encontrado!";
+                        return RedirectToAction("Filmes");
+                    }
+
+                    // Atualizar todas as propriedades
+                    filmeExistente.Titulo = filme.Titulo;
+                    filmeExistente.Genero = filme.Genero;
+                    filmeExistente.Duracao = filme.Duracao;
+                    filmeExistente.Sinopse = filme.Sinopse;
+                    filmeExistente.Realizador = filme.Realizador;
+                    filmeExistente.DataLancamento = filme.DataLancamento;
+                    filmeExistente.Elenco = filme.Elenco;
+                    filmeExistente.Capa = filme.Capa;
+                    filmeExistente.Background = filme.Background;
+                    filmeExistente.TrailerYoutubeId = filme.TrailerYoutubeId;
+                    filmeExistente.SempreNoCinema = false;
+
+                    _context.Filmes.Update(filmeExistente);
+                    TempData["SuccessMessage"] = $"Filme '{filme.Titulo}' atualizado com sucesso!";
+                }
                 else
-                    _context.Filmes.Update(filme);
+                {
+                    // CRIAR - novo filme
+                    _context.Filmes.Add(filme);
+                    TempData["SuccessMessage"] = $"Filme '{filme.Titulo}' criado com sucesso!";
+                }
 
                 _context.SaveChanges();
-                TempData["SuccessMessage"] = "Filme guardado com sucesso!";
-                return RedirectToAction("FilmesDashboard");
+                return RedirectToAction("Filmes");
             }
-            return View("FilmeForm", filme);
+            catch (Exception ex)
+            {
+                // Em caso de erro, mostra mensagem e retorna à view
+                TempData["ErrorMessage"] = $"Erro ao salvar filme: {ex.Message}";
+                return View("FilmeForm", filme);
+            }
         }
+
+        // GET: Formulário de Sessão (novo ou editar)
+        public async Task<IActionResult> SessaoForm(int? id, int? filmeId)
+        {
+            ViewBag.Filmes = await _context.Filmes.ToListAsync();
+
+            Sessao sessao;
+
+            if (id.HasValue)
+            {
+                sessao = await _context.Sessoes.FindAsync(id.Value);
+                if (sessao == null) return NotFound();
+            }
+            else
+            {
+                sessao = new Sessao
+                {
+                    FilmeId = filmeId ?? 0,
+                    DataHora = DateTime.Now.AddDays(7),
+                    Preco = 7,
+                    CapacidadeTotal = 100,
+                    LugaresDisponiveis = 100
+                };
+            }
+
+            return View(sessao);
+        }
+
+
+
+
+
+        // GET: Criar sessão
+        public IActionResult CriarSessao(int filmeId)
+        {
+            // Guardar o FilmeId na Session
+            HttpContext.Session.SetInt32("FilmeIdSelecionado", filmeId);
+
+            // Redirecionar para o formulário
+            return RedirectToAction("SessaoForm", new { id = (int?)null, filmeId = filmeId });
+        }
+
+
+        public IActionResult EditarSessao(int id)
+        {
+            return RedirectToAction("SessaoForm", new { id = id });
+        }
+
+        // POST: Salvar Sessao
+        [HttpPost]
+        public IActionResult SaveSessao(Sessao sessao)
+        {
+            // Trazer lista de filmes caso haja erro de validação
+            ViewBag.Filmes = _context.Filmes.ToList();
+
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Existem erros no formulário. Verifique os campos.";
+                return View("SessaoForm", sessao);
+            }
+
+            // Validar se o FilmeId existe
+            var filme = _context.Filmes.Find(sessao.FilmeId);
+            if (filme == null)
+            {
+                TempData["ErrorMessage"] = "Filme não encontrado!";
+                return View("SessaoForm", sessao);
+            }
+
+            if (sessao.Id > 0)
+            {
+                // Editar sessão existente
+                var existente = _context.Sessoes.Find(sessao.Id);
+                existente.Sala = sessao.Sala;
+                existente.DataHora = sessao.DataHora;
+                existente.Preco = sessao.Preco;
+                existente.CapacidadeTotal = sessao.CapacidadeTotal;
+                existente.FilmeId = sessao.FilmeId;
+
+                if (existente.CapacidadeTotal != sessao.CapacidadeTotal)
+                    existente.LugaresDisponiveis = sessao.CapacidadeTotal;
+
+                _context.Sessoes.Update(existente);
+                TempData["SuccessMessage"] = "Sessão atualizada com sucesso!";
+            }
+            else
+            {
+                // Criar nova sessão
+                sessao.LugaresDisponiveis = sessao.CapacidadeTotal;
+                _context.Sessoes.Add(sessao);
+                TempData["SuccessMessage"] = "Sessão criada com sucesso!";
+            }
+
+            _context.SaveChanges();
+            return RedirectToAction("Sessoes");
+        }
+
+
+
+        // POST: Apagar Sessão
+        [HttpPost]
+        public IActionResult DeleteSessao(int id)
+        {
+            var sessao = _context.Sessoes.Find(id);
+            if (sessao != null)
+            {
+                _context.Sessoes.Remove(sessao);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Sessoes");
+        }
+
     }
 }

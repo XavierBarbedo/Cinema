@@ -40,8 +40,7 @@ namespace Cinema.Models
 
         // NOVO CAMPO BOOLEAN
         public bool SempreNoCinema { get; set; }
-
-        public virtual ICollection<Sessao> Sessoes { get; set; }
+        public ICollection<Sessao>? Sessoes { get; set; }
     }
 
 }

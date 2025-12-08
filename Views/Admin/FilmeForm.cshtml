@@ -6,6 +6,23 @@
 
 <h1 class="mb-4 text-white">@ViewData["Title"]</h1>
 
+<!-- CÓDIGO DE DEBUG - ADICIONA ISTO -->
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-warning">
+        <h4>Erros de Validação:</h4>
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+<!-- FIM DO DEBUG -->
+
+<div class="row">
+
 <div class="row">
     <div class="col-md-8">
         <form asp-controller="Admin" asp-action="SaveFilme" method="post" class="needs-validation" novalidate>
@@ -101,24 +118,11 @@
                 </div>
             </div>
 
-            <div class="card bg-dark text-white mb-3">
-                <div class="card-header">
-                    <h5>Configurações</h5>
-                </div>
-                <div class="card-body">
-                    <div class="form-check form-switch">
-                        <input asp-for="SempreNoCinema" class="form-check-input" type="checkbox" />
-                        <label asp-for="SempreNoCinema" class="form-check-label"></label>
-                        <div class="form-text text-light">Filmes marcados como "Sempre no Cinema" não podem ser eliminados</div>
-                    </div>
-                </div>
-            </div>
-
             <div class="mb-3">
                 <button type="submit" class="btn btn-success">
                     <i class="bi bi-save"></i> @(isEdit ? "Guardar Alterações" : "Criar Filme")
                 </button>
-                <a asp-controller="Admin" asp-action="FilmesDashboard" class="btn btn-secondary">
+                <a asp-controller="Admin" asp-action="Filmes" class="btn btn-secondary">
                     <i class="bi bi-x-circle"></i> Cancelar
                 </a>
             </div>

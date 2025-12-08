@@ -1,0 +1,74 @@
+﻿@model Cinema.Models.Sessao
+
+@{
+    ViewData["Title"] = Model.Id == 0 ? "Criar Sessão" : "Editar Sessão";
+    var filmes = ViewBag.Filmes as List<Cinema.Models.Filme> ?? new List<Cinema.Models.Filme>();
+    var filmeSelecionado = filmes.FirstOrDefault(f => f.Id == Model.FilmeId);
+}
+
+<div class="container mt-4" style="max-width: 650px;">
+    <h2 class="text-white mb-4">@ViewData["Title"]</h2>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <ul>
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+                <li>FilmeId enviado: @Model.FilmeId</li>
+                <li>Filme selecionado: @(filmeSelecionado?.Titulo ?? "Nenhum")</li>
+            </ul>
+        </div>
+    }
+
+    <form asp-action="SaveSessao" method="post" class="p-4 rounded" style="background:#1a1a1a; border:1px solid #333;">
+        <input type="hidden" asp-for="Id" />
+
+        <!-- Mostrar nome do filme (não editável) -->
+        <div class="mb-3">
+            <label class="form-label text-white">Filme</label>
+            <input type="text" class="form-control bg-dark text-white" value="@filmeSelecionado?.Titulo" disabled />
+            <input type="hidden" asp-for="FilmeId" value="@filmeSelecionado?.Id" />
+        </div>
+
+        <!-- SALA -->
+        <div class="mb-3">
+            <label asp-for="Sala" class="form-label text-white">Sala</label>
+            <input asp-for="Sala" class="form-control bg-dark text-white" placeholder="Ex: Sala 1" />
+            <span asp-validation-for="Sala" class="text-danger"></span>
+        </div>
+
+        <!-- DATA E HORA -->
+        <div class="mb-3">
+            <label asp-for="DataHora" class="form-label text-white">Data e Hora</label>
+            <input asp-for="DataHora" type="datetime-local" class="form-control bg-dark text-white" />
+            <span asp-validation-for="DataHora" class="text-danger"></span>
+        </div>
+
+        <!-- PREÇO -->
+        <div class="mb-3">
+            <label asp-for="Preco" class="form-label text-white">Preço (€)</label>
+            <input asp-for="Preco" type="number" step="0.01" class="form-control bg-dark text-white" />
+            <span asp-validation-for="Preco" class="text-danger"></span>
+        </div>
+
+        <!-- CAPACIDADE -->
+        <div class="mb-3">
+            <label asp-for="CapacidadeTotal" class="form-label text-white">Capacidade Total</label>
+            <input asp-for="CapacidadeTotal" type="number" class="form-control bg-dark text-white" />
+            <span asp-validation-for="CapacidadeTotal" class="text-danger"></span>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-between">
+            <a asp-action="Sessoes" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-success">Guardar</button>
+        </div>
+    </form>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

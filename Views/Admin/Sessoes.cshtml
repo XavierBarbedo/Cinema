@@ -1,4 +1,69 @@
-﻿@page
-@model Cinema.Views.Admin.SessoesModel
-@{
+﻿@model List<Cinema.Models.Filme>
+
+<h1 class="mb-4 text-white">Gestão de Sessões</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+<style>
+    .filme-card {
+        background: #111;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
+        color: white;
+        box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    }
+
+    .sessao-row {
+        background: #1c1c1c;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+</style>
+
+@foreach (var filme in Model)
+{
+    <div class="filme-card">
+        <div class="d-flex justify-content-between">
+            <h3>@filme.Titulo</h3>
+            <a class="btn btn-success" asp-action="CriarSessao" asp-route-filmeId="@filme.Id">
+                + Nova Sessão
+            </a>
+        </div>
+
+        <hr />
+
+        @if (filme.Sessoes == null || !filme.Sessoes.Any())
+        {
+            <p class="text-muted">Nenhuma sessão registada.</p>
+        }
+        else
+        {
+            foreach (var sessao in filme.Sessoes.OrderBy(s => s.DataHora))
+            {
+                <div class="sessao-row d-flex justify-content-between">
+                    <div>
+                        <strong>Data:</strong> @sessao.DataHora.ToString("dd/MM/yyyy HH:mm") <br />
+                        <strong>Sala:</strong> @sessao.Sala
+                    </div>
+
+                    <div>
+                        <a class="btn btn-primary btn-sm" asp-action="EditarSessao" asp-route-id="@sessao.Id">Editar</a>
+
+                        <form method="post" asp-action="DeleteSessao" asp-route-id="@sessao.Id"
+                              style="display:inline;">
+                            <button class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Apagar esta sessão?');">
+                                Eliminar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+    </div>
 }
