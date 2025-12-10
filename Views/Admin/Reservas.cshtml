@@ -1,4 +1,76 @@
-﻿@page
-@model Cinema.Views.Admin.ReservasModel
+﻿@model IEnumerable<Cinema.Models.Reserva>
+
 @{
+    ViewData["Title"] = "Gestão de Reservas";
 }
+
+<div class="container py-4">
+    <a asp-controller="Admin" asp-action="Home" class="admin-btn-back">
+        <i class="fa-solid fa-arrow-left"></i> Voltar ao Painel
+    </a>
+
+    <div class="admin-header">
+        <h2 class="text-white mb-0">Gestão de Reservas</h2>
+        <div class="text-muted pt-2 ms-3">Total: @Model.Count()</div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Filme</th>
+                    <th>Sessão</th>
+                    <th>Lugares</th>
+                    <th>Total</th>
+                    <th>Data Compra</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-5">
+                            Não existem reservas registadas.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>#@item.Id</td>
+                            <td>
+                                <div>@item.Utilizador?.Nome</div>
+                                <small class="text-muted">@item.Utilizador?.Email</small>
+                            </td>
+                            <td class="fw-bold">@item.Sessao?.Filme?.Titulo</td>
+                            <td>
+                                <div>@item.Sessao?.DataHora.ToString("dd/MM HH:mm")</div>
+                                <small class="text-muted">Sala @item.Sessao?.Sala</small>
+                            </td>
+                            <td>@item.NumeroBilhetes</td>
+                            <td>@item.ValorTotal.ToString("C")</td>
+                            <td>@item.DataReserva.ToShortDateString()</td>
+                            <td class="text-end">
+                                <form asp-action="DeleteReserva" asp-route-id="@item.Id" method="post" style="display:inline;" onsubmit="return confirm('Tem a certeza que deseja cancelar esta reserva?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Cancelar Reserva">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

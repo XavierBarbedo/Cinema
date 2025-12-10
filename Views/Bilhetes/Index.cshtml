@@ -1,0 +1,41 @@
+@model IEnumerable<Cinema.Models.Filme>
+
+@{
+    ViewData["Title"] = "Bilheteira";
+}
+
+<div class="container py-5 text-white">
+    <h1 class="mb-4">Bilheteira Online</h1>
+
+    <div class="row">
+        @foreach (var filme in Model)
+        {
+            <div class="col-md-12 mb-5">
+                <div class="card bg-dark text-white border-secondary mb-3">
+                    <div class="row g-0">
+                        <div class="col-md-2">
+                            <img src="@filme.Capa" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="@filme.Titulo">
+                        </div>
+                        <div class="col-md-10">
+                            <div class="card-body">
+                                <h3 class="card-title">@filme.Titulo</h3>
+                                <p class="card-text text-muted">@filme.Genero • @filme.Duracao min</p>
+                                
+                                <h5 class="mt-3">Sessões Disponíveis:</h5>
+                                <div class="d-flex flex-wrap gap-2">
+                                    @foreach (var sessao in filme.Sessoes.Where(s => s.DataHora > DateTime.Now).OrderBy(s => s.DataHora))
+                                    {
+                                        <a asp-controller="Bilhetes" asp-action="Comprar" asp-route-id="@sessao.Id" class="btn btn-outline-warning">
+                                            @sessao.DataHora.ToString("dd/MM HH:mm") <br>
+                                            <small>@sessao.Sala</small>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

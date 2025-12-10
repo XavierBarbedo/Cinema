@@ -316,3 +316,65 @@ body {
 .main-content {
     flex: 1; /* cresce para preencher o espaço e empurrar o footer para baixo */
 }
+
+/* Minimalist Admin Styles */
+.admin-table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    width: 100%;
+}
+.admin-table thead th {
+    background-color: transparent;
+    color: #888;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding: 15px;
+    border: none;
+}
+.admin-table tbody tr {
+    background-color: #1e1e1e;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.admin-table tbody tr:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+.admin-table td {
+    padding: 15px;
+    vertical-align: middle;
+    border: none;
+    color: #eee;
+}
+.admin-table td:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+.admin-table td:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+.admin-btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #bbb;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+    margin-bottom: 20px;
+}
+.admin-btn-back:hover {
+    color: white;
+}
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+.btn-admin-action {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+

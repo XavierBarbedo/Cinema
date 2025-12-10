@@ -43,7 +43,7 @@
                 ▶ Ver Trailer
             </a>
 
-            <a id="hero-bilhete" asp-controller="Sessao" asp-action="Ver" asp-route-id="@Model[0].Id" class="btn btn-primary">
+            <a id="hero-bilhete" asp-controller="Bilhetes" asp-action="Detalhes" asp-route-id="@Model[0].Id" class="btn btn-primary">
                 Ver Sessões
             </a>
         </div>
@@ -67,7 +67,9 @@
         document.getElementById('hero-title').innerText = filme.Titulo;
         document.getElementById('hero-info').innerHTML = `<strong>Com:</strong> ${filme.Elenco} <br /><strong>De:</strong> ${filme.Realizador}`;
         document.getElementById('hero-trailer').href = `https://www.youtube.com/watch?v=${filme.TrailerYoutubeId}`;
-        document.getElementById('hero-bilhete').setAttribute('asp-route-id', filme.Id);
+            document.getElementById('hero-bilhete').setAttribute('asp-controller', 'Bilhetes');
+            document.getElementById('hero-bilhete').setAttribute('asp-action', 'Detalhes');
+            document.getElementById('hero-bilhete').setAttribute('asp-route-id', filme.Id);
     }
 
     setInterval(mudarFilme, 30000);
@@ -99,7 +101,7 @@
                 <div style="padding: 12px; color: white;">
                     <h3 style="font-size:1.1rem; font-weight:600; margin-bottom:5px;">@filme.Titulo</h3>
                     <p style="opacity:0.8; font-size:0.85rem;">@filme.Genero • @filme.Duracao min</p>
-                    <a asp-controller="Sessao" asp-action="Ver" asp-route-id="@filme.Id" class="btn btn-primary" style="margin-top:8px; font-size:0.85rem;">Ver Sessões</a>
+                    <a asp-controller="Bilhetes" asp-action="Detalhes" asp-route-id="@filme.Id" class="btn btn-primary" style="margin-top:8px; font-size:0.85rem;">Ver Sessões</a>
                 </div>
             </div>
         }

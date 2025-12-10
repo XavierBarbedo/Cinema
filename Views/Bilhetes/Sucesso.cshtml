@@ -1,0 +1,28 @@
+@model Cinema.Models.Reserva
+
+@{
+    ViewData["Title"] = "Reserva Confirmada";
+}
+
+<div class="container py-5 text-white text-center">
+    <div class="card bg-dark border-success p-5" style="max-width: 600px; margin: 0 auto;">
+        <div class="mb-4 text-success">
+            <i class="fa-solid fa-circle-check" style="font-size: 80px;"></i>
+        </div>
+        
+        <h2 class="mb-3">Reserva Confirmada!</h2>
+        <p class="lead">Obrigado pela sua compra, <strong>@Model.Utilizador?.Nome</strong>.</p>
+        
+        <div class="py-4 border-top border-bottom border-secondary my-4">
+            <h4>Seus Bilhetes</h4>
+            <div class="display-6 fw-bold text-warning mb-2">@Model.LugaresMarcados</div>
+            <p class="text-muted">Total Pago: @Model.ValorTotal.ToString("C")</p>
+        </div>
+
+        <p class="text-muted">Enviámos um email de confirmação para <em>@Model.Utilizador?.Email</em>.</p>
+
+        <div class="mt-4">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary px-5">Voltar à Página Inicial</a>
+        </div>
+    </div>
+</div>

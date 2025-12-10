@@ -1,0 +1,62 @@
+@model IEnumerable<Cinema.Models.Reserva>
+
+@{
+    ViewData["Title"] = "Minhas Reservas";
+}
+
+<div class="container py-5 text-white">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Minhas Reservas</h2>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-light">
+            <i class="fa-solid fa-plus me-2"></i>Comprar Mais Bilhetes
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info bg-dark border-secondary text-white">
+            <i class="fa-solid fa-circle-info me-2"></i>Ainda não tem reservas efetuadas.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var reserva in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card bg-dark border-secondary h-100 shadow-sm">
+                        <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-dark">#@reserva.Id</span>
+                            <span class="text-muted small">@reserva.DataReserva.ToShortDateString()</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title text-white">@reserva.Sessao.Filme.Titulo</h5>
+                            
+                            <div class="d-flex align-items-center mb-3 text-muted">
+                                <i class="fa-solid fa-calendar me-2"></i>
+                                <span>@reserva.Sessao.DataHora.ToString("dd/MM/yyyy")</span>
+                                <i class="fa-solid fa-clock ms-3 me-2"></i>
+                                <span>@reserva.Sessao.DataHora.ToString("HH:mm")</span>
+                            </div>
+
+                            <p class="mb-2"><strong>Sala:</strong> @reserva.Sessao.Sala</p>
+                            <p class="mb-2"><strong>Lugares:</strong> <span class="text-warning">@reserva.LugaresMarcados</span></p>
+                            
+                            <hr class="border-secondary" />
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-muted">Total Pago</span>
+                                <span class="h4 mb-0 text-success">@reserva.ValorTotal.ToString("C")</span>
+                            </div>
+                        </div>
+                        <div class="card-footer border-secondary bg-transparent">
+                             <div class="text-center">
+                                <small class="text-muted">Apresente este bilhete à entrada.</small>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

@@ -1,69 +1,86 @@
-﻿@model List<Cinema.Models.Filme>
+﻿@model IEnumerable<Cinema.Models.Filme>
 
-<h1 class="mb-4 text-white">Gestão de Sessões</h1>
-
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+@{
+    ViewData["Title"] = "Gestão de Sessões";
 }
 
-<style>
-    .filme-card {
-        background: #111;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 30px;
-        color: white;
-        box-shadow: 0 0 20px rgba(0,0,0,0.4);
+<div class="container py-4">
+    <a asp-controller="Admin" asp-action="Home" class="admin-btn-back">
+        <i class="fa-solid fa-arrow-left"></i> Voltar ao Painel
+    </a>
+
+    <div class="admin-header">
+        <h2 class="text-white mb-0">Gestão de Sessões</h2>
+        <p class="text-muted mb-0 ms-3 pt-2">Administre sessões por filme</p>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
     }
 
-    .sessao-row {
-        background: #1c1c1c;
-        border-radius: 8px;
-        padding: 12px;
-        margin-bottom: 10px;
-    }
-</style>
-
-@foreach (var filme in Model)
-{
-    <div class="filme-card">
-        <div class="d-flex justify-content-between">
-            <h3>@filme.Titulo</h3>
-            <a class="btn btn-success" asp-action="CriarSessao" asp-route-filmeId="@filme.Id">
-                + Nova Sessão
-            </a>
-        </div>
-
-        <hr />
-
-        @if (filme.Sessoes == null || !filme.Sessoes.Any())
+    <div class="row">
+        @foreach (var filme in Model)
         {
-            <p class="text-muted">Nenhuma sessão registada.</p>
-        }
-        else
-        {
-            foreach (var sessao in filme.Sessoes.OrderBy(s => s.DataHora))
-            {
-                <div class="sessao-row d-flex justify-content-between">
-                    <div>
-                        <strong>Data:</strong> @sessao.DataHora.ToString("dd/MM/yyyy HH:mm") <br />
-                        <strong>Sala:</strong> @sessao.Sala
+            <div class="col-12 mb-4">
+                <div class="card bg-dark border-secondary">
+                    <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 text-white">@filme.Titulo</h5>
+                        <a asp-action="CriarSessao" asp-route-filmeId="@filme.Id" class="btn btn-sm btn-outline-primary">
+                            <i class="fa-solid fa-plus me-1"></i> Adicionar Sessão
+                        </a>
                     </div>
-
-                    <div>
-                        <a class="btn btn-primary btn-sm" asp-action="EditarSessao" asp-route-id="@sessao.Id">Editar</a>
-
-                        <form method="post" asp-action="DeleteSessao" asp-route-id="@sessao.Id"
-                              style="display:inline;">
-                            <button class="btn btn-danger btn-sm"
-                                    onclick="return confirm('Apagar esta sessão?');">
-                                Eliminar
-                            </button>
-                        </form>
+                    <div class="card-body p-0">
+                        @if (filme.Sessoes != null && filme.Sessoes.Any())
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-dark table-hover mb-0" style="background: transparent;">
+                                    <thead>
+                                        <tr style="border-bottom: 1px solid #444;">
+                                            <th class="ps-4">Sala</th>
+                                            <th>Data e Hora</th>
+                                            <th>Preço</th>
+                                            <th>Lugares</th>
+                                            <th class="text-end pe-4">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var sessao in filme.Sessoes.OrderBy(s => s.DataHora))
+                                        {
+                                            <tr>
+                                                <td class="ps-4">@sessao.Sala</td>
+                                                <td>@sessao.DataHora.ToString("dd/MM/yyyy HH:mm")</td>
+                                                <td>@sessao.Preco.ToString("C")</td>
+                                                <td>
+                                                    <span class="badge @(sessao.LugaresDisponiveis > 10 ? "bg-success" : "bg-danger")">
+                                                        @sessao.LugaresDisponiveis / @sessao.CapacidadeTotal
+                                                    </span>
+                                                </td>
+                                                <td class="text-end pe-4">
+                                                    <a asp-action="EditarSessao" asp-route-id="@sessao.Id" class="btn btn-sm btn-outline-light me-2">
+                                                        <i class="fa-solid fa-pen"></i>
+                                                    </a>
+                                                    <form asp-action="DeleteSessao" asp-route-id="@sessao.Id" method="post" style="display:inline;" onsubmit="return confirm('Apagar sessão?');">
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                            <i class="fa-solid fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="p-4 text-center text-muted">
+                                <em>Nenhuma sessão agendada para este filme.</em>
+                            </div>
+                        }
                     </div>
                 </div>
-            }
+            </div>
         }
     </div>
-}
+</div>

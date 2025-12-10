@@ -1,0 +1,53 @@
+@model Cinema.Models.Filme
+
+@{
+    ViewData["Title"] = Model.Titulo;
+}
+
+<div class="container py-5 text-white">
+    <div class="row">
+        <div class="col-md-4">
+            <img src="@Model.Capa" class="img-fluid rounded shadow-lg mb-4" alt="@Model.Titulo">
+        </div>
+        <div class="col-md-8">
+            <h1 class="display-4 fw-bold">@Model.Titulo</h1>
+            <p class="lead text-muted">@Model.Genero • @Model.Duracao min</p>
+            
+            <p class="mt-4">@Model.Sinopse</p>
+            
+            <p><strong>Realizador:</strong> @Model.Realizador</p>
+            <p><strong>Elenco:</strong> @Model.Elenco</p>
+
+            <h3 class="mt-5 mb-4 border-bottom border-secondary pb-2">Sessões Disponíveis</h3>
+            
+            @if (Model.Sessoes == null || !Model.Sessoes.Any(s => s.DataHora > DateTime.Now))
+            {
+                <div class="alert alert-warning">Não existem sessões agendadas para este filme no momento.</div>
+            }
+            else
+            {
+                <div class="d-flex flex-wrap gap-3">
+                    @foreach (var sessao in Model.Sessoes.Where(s => s.DataHora > DateTime.Now).OrderBy(s => s.DataHora))
+                    {
+                        <a asp-controller="Bilhetes" asp-action="Comprar" asp-route-id="@sessao.Id" class="btn btn-lg btn-outline-warning d-flex flex-column align-items-center p-3" style="min-width: 150px;">
+                            <span class="h4 mb-0">@sessao.DataHora.ToString("HH:mm")</span>
+                            <span class="small text-muted">@sessao.DataHora.ToString("dd/MM")</span>
+                            <span class="badge bg-secondary mt-2">@sessao.Sala</span>
+                            <span class="mt-2 text-warning">@sessao.Preco.ToString("C")</span>
+                        </a>
+                    }
+                </div>
+            }
+            
+            @if(!string.IsNullOrEmpty(Model.TrailerYoutubeId))
+            {
+                 <div class="mt-5">
+                    <h3>Trailer</h3>
+                    <div class="ratio ratio-16x9 mt-3">
+                        <iframe src="https://www.youtube.com/embed/@Model.TrailerYoutubeId" title="YouTube video player" allowfullscreen></iframe>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,79 +1,63 @@
-﻿@model List<Cinema.Models.Filme>
+﻿@model IEnumerable<Cinema.Models.Filme>
 
 @{
-    ViewData["Title"] = "Dashboard de Filmes";
+    ViewData["Title"] = "Gestão de Filmes";
 }
 
-<h1 class="mb-4 text-white">Dashboard de Filmes</h1>
+<div class="container py-4">
+    <a asp-controller="Admin" asp-action="Home" class="admin-btn-back">
+        <i class="fa-solid fa-arrow-left"></i> Voltar ao Painel
+    </a>
 
-<div class="mb-3">
-    <a class="btn btn-success" asp-action="Create">Adicionar Novo Filme</a>
-</div>
-
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["SuccessMessage"]
+    <div class="admin-header">
+        <h2 class="text-white mb-0">Gestão de Filmes</h2>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fa-solid fa-plus me-2"></i>Novo Filme
+        </a>
     </div>
-}
 
-<style>
-    #filmes-table, #filmes-table th, #filmes-table td {
-        color: white !important;
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
     }
 
-        #filmes-table tbody tr:nth-child(odd) {
-            background-color: #1a1a1a !important;
-        }
-
-        #filmes-table tbody tr:nth-child(even) {
-            background-color: #121212 !important;
-        }
-</style>
-
-<table class="table table-striped table-hover" id="filmes-table">
-    <thead class="table-dark">
-        <tr>
-            <th>Capa</th>
-            <th>Título</th>
-            <th>Género</th>
-            <th>Duração</th>
-            <th>Realizador</th>
-            <th>Data Lançamento</th>
-            <th>Trailer</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var filme in Model)
-        {
-            <tr>
-                <td>
-                    @if (!string.IsNullOrEmpty(filme.Capa))
-                    {
-                        <img src="@filme.Capa" alt="@filme.Titulo" style="width:50px; height:auto;" />
-                    }
-                </td>
-                <td>@filme.Titulo</td>
-                <td>@filme.Genero</td>
-                <td>@filme.Duracao min</td>
-                <td>@filme.Realizador</td>
-                <td>@filme.DataLancamento.ToString("dd/MM/yyyy")</td>
-                <td>
-                    @if (!string.IsNullOrEmpty(filme.TrailerYoutubeId))
-                    {
-                        <a href="https://www.youtube.com/watch?v=@filme.TrailerYoutubeId" target="_blank">Ver Trailer</a>
-                    }
-                </td>
-                <td>
-                    <a class="btn btn-primary btn-sm" asp-controller="Admin" asp-action="Edit" asp-route-id="@filme.Id">Editar</a>
-
-                        <form asp-action="DeleteConfirmed" method="post" style="display:inline;">
-                            <input type="hidden" name="id" value="@filme.Id" />
-                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Tem a certeza que deseja apagar este filme?');">Eliminar</button>
-                        </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Capa</th>
+                    <th>Título</th>
+                    <th>Género</th>
+                    <th>Data Lançamento</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td style="width: 80px;">
+                            <img src="@item.Capa" alt="@item.Titulo" style="width: 50px; height: 75px; object-fit: cover; border-radius: 4px;">
+                        </td>
+                        <td class="fw-bold">@item.Titulo</td>
+                        <td><span class="badge bg-secondary">@item.Genero</span></td>
+                        <td>@item.DataLancamento.ToShortDateString()</td>
+                        <td class="text-end">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-light me-2">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+                            <a asp-action="CriarSessao" asp-route-filmeId="@item.Id" class="btn btn-sm btn-outline-info me-2" title="Criar Sessão">
+                                <i class="fa-solid fa-clock"></i>
+                            </a>
+                            <form asp-action="DeleteConfirmed" asp-route-id="@item.Id" method="post" style="display:inline;" onsubmit="return confirm('Tem a certeza que deseja apagar este filme?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

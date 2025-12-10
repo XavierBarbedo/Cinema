@@ -32,5 +32,7 @@ namespace Cinema.Models
 
         [StringLength(50)]
         public string Estado { get; set; } = "Confirmada"; // Confirmada, Cancelada
+
+        public string? LugaresMarcados { get; set; } // Ex: "A1,A2,A3"
     }
 }
