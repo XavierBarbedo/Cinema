@@ -8,49 +8,145 @@
 <head>
     <meta charset="utf-8" />
     <title>Login - Cinema</title>
+    <!-- Usando Bootstrap para consistência com o resto do site, mas com overrides escuros -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #000000;
+            background-image: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+        .login-card {
+            background-color: #121212;
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-logo img {
+            width: 120px;
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            background-color: #222;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .form-control:focus {
+            background-color: #2a2a2a;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+            color: #fff;
+        }
+
+        .btn-primary {
+            padding: 12px;
+            font-weight: 600;
+            border-radius: 8px;
+            width: 100%;
+            margin-top: 10px;
+            background-color: #0d6efd;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+            transform: translateY(-2px);
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 20px;
+            color: #aaa;
+        }
+
+        .links a {
+            color: #0d6efd;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .links a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        @@keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<body>
 
-    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-
-        <h2 class="text-2xl font-bold mb-6 text-center text-gray-700">Iniciar Sessão</h2>
+    <div class="login-card">
+        <div class="login-logo">
+            <!-- Caso a imagem não exista, o alt text aparecerá. -->
+            <img src="~/images/cisco_logo.png" alt="Cisco Cinemas">
+            <h3 class="fw-bold">Bem-vindo</h3>
+            <p class="text-muted">Inicie sessão para continuar</p>
+        </div>
 
         @if (TempData["Erro"] != null)
         {
-            <div class="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
-                @TempData["Erro"]
+            <div class="alert alert-danger text-center" role="alert">
+                <i class="fa-solid fa-triangle-exclamation me-2"></i> @TempData["Erro"]
             </div>
         }
 
-        <form asp-action="Login" asp-controller="Utilizador" method="post" class="space-y-4">
-
-            <div>
-                <input asp-for="Email" type="email" placeholder="Email"
-                       class="w-full p-3 border rounded focus:ring-2 focus:ring-blue-500" />
-                <span asp-validation-for="Email" class="text-red-500 text-sm"></span>
+        <form asp-action="Login" asp-controller="Utilizador" method="post">
+            <input type="hidden" name="returnUrl" value="@Context.Request.Query["returnUrl"]" />
+            
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label text-muted small">EMAIL</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fa-solid fa-envelope"></i></span>
+                    <input asp-for="Email" type="email" class="form-control" placeholder="exemplo@email.com" />
+                </div>
+                <span asp-validation-for="Email" class="text-danger small"></span>
             </div>
 
-            <div>
-                <input asp-for="Password" type="password" placeholder="Palavra-passe"
-                       class="w-full p-3 border rounded focus:ring-2 focus:ring-blue-500" />
-                <span asp-validation-for="Password" class="text-red-500 text-sm"></span>
+            <div class="mb-4">
+                <label asp-for="Password" class="form-label text-muted small">PALAVRA-PASSE</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fa-solid fa-lock"></i></span>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="••••••••" />
+                </div>
+                <span asp-validation-for="Password" class="text-danger small"></span>
             </div>
 
-            <button type="submit"
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded mt-2">
-                Entrar
+            <button type="submit" class="btn btn-primary">
+                Entrar <i class="fa-solid fa-arrow-right-to-bracket ms-2"></i>
             </button>
         </form>
 
-        <div class="text-center mt-4">
-            <a asp-action="Registar" asp-controller="Utilizador" class="text-blue-600 hover:underline">
-                Criar conta
-            </a>
+        <div class="links">
+            <p class="mb-1">Não tem conta?</p>
+            <a asp-action="Registar" asp-controller="Utilizador">Criar nova conta</a>
         </div>
-
     </div>
 
 </body>

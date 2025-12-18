@@ -54,13 +54,17 @@ namespace Cinema.Controllers
             var reserva = _context.Reservas.Find(id);
             if (reserva != null)
             {
-                // Opcional: devolver lugares à sessão? 
-                // var sessao = _context.Sessoes.Find(reserva.SessaoId);
-                // if(sessao != null) { sessao.LugaresDisponiveis += reserva.Lugares; }
+                // Devolver lugares à sessão
+                var sessao = _context.Sessoes.Find(reserva.SessaoId);
+                if (sessao != null) 
+                { 
+                    sessao.LugaresDisponiveis += reserva.NumeroBilhetes; 
+                    _context.Sessoes.Update(sessao);
+                }
 
                 _context.Reservas.Remove(reserva);
                 _context.SaveChanges();
-                TempData["SuccessMessage"] = "Reserva cancelada com sucesso!";
+                TempData["SuccessMessage"] = "Reserva cancelada com sucesso e lugares repostos!";
             }
             return RedirectToAction("Reservas");
         }

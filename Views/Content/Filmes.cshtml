@@ -1,0 +1,28 @@
+@{
+    ViewData["Title"] = "Sobre Nossos Filmes";
+}
+<div class="text-center text-white py-5">
+    <h1 class="display-4 fw-bold mb-4">Compressão de Vídeo Sem Perdas</h1>
+    <p class="lead mb-5">Transmitimos emoções a 4K, 60fps e com latência zero.</p>
+    
+    <div class="row g-4 justify-content-center mb-5">
+        <div class="col-md-5">
+            <div class="p-4 bg-dark rounded shadow border border-secondary">
+                <i class="fa-solid fa-film fa-3x text-danger mb-3"></i>
+                <h3>Codec Emocional</h3>
+                <p>Nossos filmes são descodificados diretamente no seu cérebro. Suporte total a choro, risos e gritos.</p>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="p-4 bg-dark rounded shadow border border-secondary">
+                <i class="fa-solid fa-eye fa-3x text-warning mb-3"></i>
+                <h3>Resolução Infinita</h3>
+                <p>Esqueça o 1080p. Aqui a realidade é renderizada em tempo real.</p>
+            </div>
+        </div>
+    </div>
+
+    <a asp-controller="Filmes" asp-action="Index" class="btn btn-primary btn-lg px-5 py-3 fw-bold">
+        <i class="fa-solid fa-play me-2"></i> VER CARTAZ COMPLETO
+    </a>
+</div>

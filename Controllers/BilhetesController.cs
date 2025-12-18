@@ -41,6 +41,13 @@ namespace Cinema.Controllers
         // GET: /Bilhetes/Comprar/{sessaoId}
         public async Task<IActionResult> Comprar(int id)
         {
+            // Verificar Login
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Utilizador", new { returnUrl = $"/Bilhetes/Comprar/{id}" });
+            }
+
             var sessao = await _context.Sessoes
                 .Include(s => s.Filme)
                 .Include(s => s.Reservas)
@@ -61,8 +68,14 @@ namespace Cinema.Controllers
 
         // POST: /Bilhetes/Confirmar
         [HttpPost]
-        public async Task<IActionResult> Confirmar(int sessaoId, string lugaresSelecionados, string nomeCliente, string emailCliente)
+        public async Task<IActionResult> Confirmar(int sessaoId, string lugaresSelecionados)
         {
+            // Verificar Login
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Utilizador");
+            }
             if (string.IsNullOrEmpty(lugaresSelecionados))
             {
                 TempData["ErrorMessage"] = "Selecione pelo menos um lugar.";
@@ -75,21 +88,9 @@ namespace Cinema.Controllers
             var lugaresArray = lugaresSelecionados.Split(',', StringSplitOptions.RemoveEmptyEntries);
             int qtdBilhetes = lugaresArray.Length;
 
-            // Criar utilizador "temporário" ou buscar existente (simplificado para este exemplo)
-            // Em um cenário real, usaria o User.Identity.Name ou obrigaria login
-            var utilizador = await _context.Utilizadores.FirstOrDefaultAsync(u => u.Email == emailCliente);
-            if (utilizador == null)
-            {
-                utilizador = new Utilizador
-                {
-                    Nome = nomeCliente,
-                    Email = emailCliente,
-                    Password = "guest", // Placeholder
-                    Role = "Cliente"
-                };
-                _context.Utilizadores.Add(utilizador);
-                await _context.SaveChangesAsync();
-            }
+            // Utilizador já autenticado
+            var utilizador = await _context.Utilizadores.FindAsync(userId);
+            if (utilizador == null) return RedirectToAction("Login", "Utilizador");
 
             var reserva = new Reserva
             {

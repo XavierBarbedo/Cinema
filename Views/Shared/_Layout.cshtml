@@ -23,7 +23,14 @@
             <!-- ========== TOPBAR ========== -->
             <div class="topbar container-fluid">
 
-                <a asp-controller="Home" asp-action="Index" class="ms-4"
+                @{
+                    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+                    var isAdmin = currentController == "Admin";
+                }
+
+                <a asp-controller="@(isAdmin ? "Admin" : "Home")" 
+                   asp-action="@(isAdmin ? "Home" : "Index")" 
+                   class="ms-4"
                    style="color:white; font-size:26px; font-weight:700; display:flex; align-items:center; gap:10px; text-decoration:none;">
                     Cinemas
                     <img src="~/images/cisco_logo.png" style="width:110px;">
@@ -82,13 +89,13 @@
 
             <!-- ========== MENU INFERIOR ========== -->
             <div class="menubar container-fluid ps-4">
-                <a asp-controller="Filmes" asp-action="Index">Filmes</a>
-                <a asp-controller="Cinemas" asp-action="Index">Cinemas</a>
-                <a asp-controller="Bar" asp-action="Index">Bar</a>
-                <a asp-controller="Vantagens" asp-action="Index">Vantagens</a>
-                <a asp-controller="Novidades" asp-action="Index">Novidades</a>
-                <a asp-controller="Produtos" asp-action="Index">Outros Produtos</a>
-                <a asp-controller="Corporativo" asp-action="Index">Corporativo</a>
+                <a asp-controller="Content" asp-action="Filmes">Filmes</a>
+                <a asp-controller="Content" asp-action="Cinemas">Cinemas</a>
+                <a asp-controller="Content" asp-action="Bar">Bar</a>
+                <a asp-controller="Content" asp-action="Vantagens">Vantagens</a>
+                <a asp-controller="Content" asp-action="Novidades">Novidades</a>
+                <a asp-controller="Content" asp-action="Produtos">Outros Produtos</a>
+                <a asp-controller="Content" asp-action="Corporativo">Corporativo</a>
             </div>
 
         </header>
