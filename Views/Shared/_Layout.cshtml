@@ -25,7 +25,8 @@
 
                 @{
                     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
-                    var isAdmin = currentController == "Admin";
+                    var userRole = Context.Session.GetString("UserRole");
+                    var isAdmin = userRole == "Administrador";
                 }
 
                 <a asp-controller="@(isAdmin ? "Admin" : "Home")" 
@@ -36,24 +37,22 @@
                     <img src="~/images/cisco_logo.png" style="width:110px;">
                 </a>
 
-                <!-- Caixa de Pesquisa -->
-                <div class="search-box">
-                    <input type="text" placeholder="Pesquise por filmes, atores, realizadores..." />
-                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                </div>
+                <!-- Search box removed -->
 
                 <!-- ======= BOTÕES DIREITA ======= -->
                 <div class="topbar-buttons">
 
-                    <a class="icon-btn" asp-controller="Bilhetes" asp-action="MinhasReservas">
-                        🎟 Reservas
-                    </a>
+                    @if (!isAdmin)
+                    {
+                        <a class="icon-btn" asp-controller="Bilhetes" asp-action="MinhasReservas">
+                            <i class="fa-solid fa-ticket"></i> Reservas
+                        </a>
+                    }
 
                     @if (string.IsNullOrEmpty(userName))
                     {
-                        <!-- Usuário não autenticado -->
                         <a class="icon-btn" asp-controller="Utilizador" asp-action="Login">
-                            👤 Login
+                            <i class="fa-solid fa-user"></i> Login
                         </a>
                     }
                     else
@@ -87,16 +86,19 @@
                 </div>
             </div>
 
-            <!-- ========== MENU INFERIOR ========== -->
-            <div class="menubar container-fluid ps-4">
-                <a asp-controller="Content" asp-action="Filmes">Filmes</a>
-                <a asp-controller="Content" asp-action="Cinemas">Cinemas</a>
-                <a asp-controller="Content" asp-action="Bar">Bar</a>
-                <a asp-controller="Content" asp-action="Vantagens">Vantagens</a>
-                <a asp-controller="Content" asp-action="Novidades">Novidades</a>
-                <a asp-controller="Content" asp-action="Produtos">Outros Produtos</a>
-                <a asp-controller="Content" asp-action="Corporativo">Corporativo</a>
-            </div>
+            <!-- ========== MENU INFERIOR (Apenas mostra se NÃO for admin) ========== -->
+            @if (!isAdmin)
+            {
+                <div class="menubar container-fluid ps-4">
+                    <a asp-controller="Content" asp-action="Filmes">Filmes</a>
+                    <a asp-controller="Content" asp-action="Cinemas">Cinemas</a>
+                    <a asp-controller="Content" asp-action="Bar">Bar</a>
+                    <a asp-controller="Content" asp-action="Vantagens">Vantagens</a>
+                    <a asp-controller="Content" asp-action="Novidades">Novidades</a>
+                    <a asp-controller="Content" asp-action="Produtos">Outros Produtos</a>
+                    <a asp-controller="Content" asp-action="Corporativo">Corporativo</a>
+                </div>
+            }
 
         </header>
 
