@@ -1,35 +1,53 @@
 using Microsoft.EntityFrameworkCore;
 using Cinema.Data;
-using Cinema.Services; // <- adiciona isto
+using Cinema.Services; 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ==========================================
-// ConfiguraÁ„o de serviÁos
+// Configura√ß√£o de servi√ßos
 // ==========================================
 
 // Liga o DbContext ao SQL Server LocalDB
 builder.Services.AddDbContext<CinemaDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Adiciona suporte a controladores com views
 builder.Services.AddControllersWithViews();
 
-// Adicionar suporte a sess„o
-builder.Services.AddDistributedMemoryCache();  // Cache em memÛria para sess„o
+// Adicionar suporte a sess√£o
+builder.Services.AddDistributedMemoryCache();  // Cache em mem√≥ria para sess√£o
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // tempo de expiraÁ„o da sess„o
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // tempo de expira√ß√£o da sess√£o
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
 
 // ==========================================
-// Registar serviÁo TMDb
+// Registar servi√ßo TMDb
 // ==========================================
 builder.Services.AddHttpClient<TmdbService>();
 
 var app = builder.Build();
+
+// ==========================================
+// Auto-Migration
+// ==========================================
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<CinemaDbContext>();
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred creating the DB.");
+    }
+}
 
 // ==========================================
 // Middleware
@@ -46,14 +64,14 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Ativar sess„o antes de UseAuthorization
+// Ativar sess√£o antes de UseAuthorization
 app.UseSession();
 
 app.UseAuthorization();
 
-// Rota padr„o
+// Rota padr√£o
 app.MapControllerRoute(
-name: "default",
-pattern: "{controller=Home}/{action=Index}/{id?}");
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

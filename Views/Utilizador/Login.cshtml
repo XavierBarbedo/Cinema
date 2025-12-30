@@ -133,7 +133,10 @@
                 <label asp-for="Password" class="form-label text-muted small">PALAVRA-PASSE</label>
                 <div class="input-group">
                     <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fa-solid fa-lock"></i></span>
-                    <input asp-for="Password" type="password" class="form-control" placeholder="••••••••" />
+                    <input asp-for="Password" type="password" class="form-control" placeholder="••••••••" id="Password" />
+                    <button class="btn btn-outline-secondary bg-dark border-secondary text-secondary" type="button" id="togglePassword">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
                 </div>
                 <span asp-validation-for="Password" class="text-danger small"></span>
             </div>
@@ -142,6 +145,23 @@
                 Entrar <i class="fa-solid fa-arrow-right-to-bracket ms-2"></i>
             </button>
         </form>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const togglePassword = document.querySelector("#togglePassword");
+            const password = document.querySelector("#Password");
+
+            togglePassword.addEventListener("click", function () {
+                // toggle the type attribute
+                const type = password.getAttribute("type") === "password" ? "text" : "password";
+                password.setAttribute("type", type);
+                
+                // toggle the icon
+                this.querySelector("i").classList.toggle("fa-eye");
+                this.querySelector("i").classList.toggle("fa-eye-slash");
+            });
+        });
+    </script>
 
         <div class="links">
             <p class="mb-1">Não tem conta?</p>
